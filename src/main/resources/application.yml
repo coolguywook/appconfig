@@ -1,0 +1,36 @@
+server:
+  port: 8888
+  
+spring:
+  application:
+    name: appconfig-manager
+  profiles:
+    active: local
+    
+security:
+  basic:
+    enabled: false
+
+---
+spring:
+  profiles: local
+
+---
+spring:
+  profiles: dev
+       
+---    
+spring:
+  profiles: ist
+    
+---    
+spring:
+  profiles: uat
+  
+---    
+spring:
+  profiles: nft
+    
+---    
+spring:
+  profiles: prod
