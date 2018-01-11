@@ -33,8 +33,8 @@ public class VersionRepositoryTest {
 
     @Test
     public void testInsertVersionShouldReturnExpectedVersioni() throws Exception {
-    	this.entityManager.persist(new AppCode(1, new Timestamp(System.currentTimeMillis())));
-        AppCode appCode = this.appCodeRepository.findOne(1);
+    	this.entityManager.persist(new AppCode("1", new Timestamp(System.currentTimeMillis())));
+        AppCode appCode = this.appCodeRepository.findOne("1");
         
     	VersionId id = new VersionId();
     	id.setCode(appCode.getCode());
@@ -46,7 +46,7 @@ public class VersionRepositoryTest {
     	
         this.entityManager.persist(version);
         Version returnVersion = this.versionRepository.findOne(id);
-        assertEquals(1, returnVersion.getVersionId().getCode().intValue());
+        assertEquals("1", returnVersion.getVersionId().getCode());
         assertThat(returnVersion.getData()).isEqualToIgnoringCase("{\"name\":\"Gerrard\",\"age\":\"30\"}");
     }
 }

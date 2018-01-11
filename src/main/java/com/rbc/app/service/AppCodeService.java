@@ -8,15 +8,17 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.rbc.app.domain.AppCode;
 import com.rbc.app.domain.Response;
 import com.rbc.app.domain.Version;
 import com.rbc.app.domain.VersionId;
+import com.rbc.app.exception.SystemRuntimeException;
 import com.rbc.app.repository.AppCodeRepository;
 import com.rbc.app.repository.VersionRepository;
 
@@ -33,7 +35,7 @@ public class AppCodeService {
 		this.versionRepository = Preconditions.checkNotNull(versionRepository);
 	}
 	
-	public Response getDataByAppCodeAndVersion(Integer code, String ver) {
+	public String getDataByAppCodeAndVersion(String code, String ver) {
 		Preconditions.checkNotNull(code);
 		Preconditions.checkNotNull(ver);
 		
@@ -48,23 +50,25 @@ public class AppCodeService {
 			res.setVersion(ver);
 			res.setData(returnedVersion.getData());
 			
-			return res;			
+			return convertObjectToJSon(res);		
 		}
-		return null;
+		return "";
 	}
 	
-	public List<Version> getDataListByAppCodeAndOrderByVersionDesc(Integer code) {
+	public String getDataListByAppCodeAndOrderByVersionDesc(String code) {
 		Preconditions.checkNotNull(code);
 		AppCode appCode = appCodeRepository.findByCode(code);
+		if(appCode==null) return "[]";
 		List<Version> versions = appCode.getVersions().stream().filter(x -> "0".equals(x.getUse())).collect(Collectors.toList());
 		//List<Version> versions = appCode.getVersions();
 		Comparator<Version> versionComparator = (o1, o2)->o2.getUDatetime().compareTo(o1.getCDatetime());
 		versions.sort(versionComparator);
-		return versions;
+		
+		return convertObjectToJSon(versions);
 	}
 	
 	@Transactional
-	public Response save(Integer code, String ver, String data) {
+	public String save(String code, String ver, String data) {
 		Preconditions.checkNotNull(code);
 		Preconditions.checkNotNull(ver);
 		
@@ -81,7 +85,7 @@ public class AppCodeService {
 			AppCode appCode = new AppCode(code, currentTimestamp);
 			
 			appCodeRepository.save(appCode);
-			Integer returnedCode = appCode.getCode();
+			String returnedCode = appCode.getCode();
 			
 			Version version = new Version();
 			VersionId newId = new VersionId();
@@ -107,6 +111,19 @@ public class AppCodeService {
 		res.setVersion(ver);
 		res.setData(data);
 		
-		return res;
+		return convertObjectToJSon(res);
+	}
+	
+	
+	private String convertObjectToJSon(Object obj) {
+		if(obj == null) return "";
+		ObjectMapper objectMapper = new ObjectMapper();
+		String resJson = null;
+		try {
+			resJson = objectMapper.writeValueAsString(obj);
+		} catch (JsonProcessingException e) {
+			throw new SystemRuntimeException(e.getMessage());
+		}
+		return resJson;
 	}
 }

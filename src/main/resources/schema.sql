@@ -1,6 +1,6 @@
 create table appcode
 (
-   code integer not null,
+   code varchar(100) not null,
    c_datetime timestamp,
    primary key(code)
 );
@@ -8,7 +8,7 @@ create table appcode
 create table version
 (
 	version varchar(10) not null,
-	code integer not null,
+	code varchar(100) not null,
 	use	 char(1) default '0',
 	data clob,
 	c_datetime timestamp,

@@ -29,7 +29,7 @@ public class AppCode {
 
 	 @Id
 	 @Column(name = "code")
-	 private Integer code;
+	 private String code;
 	  
 	 @Column(name = "c_datetime")
 	 private Timestamp cDatetime;
@@ -41,7 +41,7 @@ public class AppCode {
 	 public AppCode() {		 
 	 }
 	 
-	 public AppCode(Integer code, Timestamp cDatetime) {
+	 public AppCode(String code, Timestamp cDatetime) {
 		 this.code = code;
 		 this.cDatetime = cDatetime;
 	 }

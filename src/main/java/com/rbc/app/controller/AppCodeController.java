@@ -23,6 +23,8 @@ import com.rbc.app.service.AppCodeService;
 
 import static com.rbc.app.common.Constants.RESTFUL_VERSION;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -46,11 +48,10 @@ public class AppCodeController {
 	
 	@RequestMapping(value="/{appCode}/config/{version:.+}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> getData(
-			@PathVariable("appCode") Integer code,
+			@PathVariable("appCode") String code,
 			@PathVariable("version") String ver, HttpServletRequest req) {
     	
-		Response returnedData = appCodeService.getDataByAppCodeAndVersion(code, ver);
-		String resJson = convertObjectToJSon(returnedData);	
+		String resJson = appCodeService.getDataByAppCodeAndVersion(code, ver);
 		Success response = successResponseMessage("".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value()
 				, "".equals(resJson) ? "No content" : "Success", resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
@@ -58,23 +59,21 @@ public class AppCodeController {
 	
 	@RequestMapping(value="/{appCode}/config", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> getDataList(
-			@PathVariable("appCode") Integer code, HttpServletRequest req) {
+			@PathVariable("appCode") String code, HttpServletRequest req) {
     	
-		List<Version> returnedList = appCodeService.getDataListByAppCodeAndOrderByVersionDesc(code);
-		String resJson = convertObjectToJSon(returnedList);	
-		Success response = successResponseMessage((returnedList == null || returnedList.isEmpty()) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value()
-				, (returnedList == null || returnedList.isEmpty()) ? "No content" : "Success", resJson, req);
+		String resJson = appCodeService.getDataListByAppCodeAndOrderByVersionDesc(code);
+		Success response = successResponseMessage("[]".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value()
+				, "[]".equals(resJson) ? "No content" : "Success", resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value="/{appCode}/config/{version:.+}", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<?> postData(
-			@PathVariable("appCode") Integer code,
+			@PathVariable("appCode") String code,
 			@PathVariable("version") String ver, 
 			@RequestBody String data, HttpServletRequest req) {
-    	
-		Response returnedData = appCodeService.save(code, ver, data);
-		String resJson = convertObjectToJSon(returnedData);		
+    	Preconditions.checkArgument(isNotBlank(data), "Invalid Request");
+    	String resJson = appCodeService.save(code, ver, data);
 		Success response = successResponseMessage(HttpStatus.OK.value(), "Success", resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
@@ -88,18 +87,7 @@ public class AppCodeController {
 		success.setData(data);
 		return success;
 	}
-	
-	private String convertObjectToJSon(Object obj) {
-		if(obj == null) return "";
-		ObjectMapper objectMapper = new ObjectMapper();
-		String resJson = null;
-		try {
-			resJson = objectMapper.writeValueAsString(obj);
-		} catch (JsonProcessingException e) {
-			throw new SystemRuntimeException(e.getMessage());
-		}
-		return resJson;
-	}
+
 	
     private long getCurrentTimestamp(Date date) {
     	Timestamp timestamp = new Timestamp(date.getTime());
