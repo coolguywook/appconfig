@@ -1,10 +1,10 @@
 package com.rbc.app.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,9 +58,19 @@ public class AppCodeService {
 	public String getDataListByAppCodeAndOrderByVersionDesc(String code) {
 		Preconditions.checkNotNull(code);
 		AppCode appCode = appCodeRepository.findByCode(code);
-		if(appCode==null) return "[]";
-		List<Version> versions = appCode.getVersions().stream().filter(x -> "0".equals(x.getUse())).collect(Collectors.toList());
-		//List<Version> versions = appCode.getVersions();
+		
+		if(appCode==null) return "";
+		if(appCode.getVersions()==null) return "";
+		if(appCode.getVersions().isEmpty()) return "";
+		
+		List<Version> returnedVersions = appCode.getVersions();
+		List<Version> versions = new ArrayList<Version>();
+		for(int i=0; i < returnedVersions.size(); i++) {
+			Version ver = returnedVersions.get(i);
+			if("0".equals(ver.getUse())) {
+				versions.add(ver);
+			}
+		}
 		Comparator<Version> versionComparator = (o1, o2)->o2.getUDatetime().compareTo(o1.getCDatetime());
 		versions.sort(versionComparator);
 		
@@ -115,7 +125,7 @@ public class AppCodeService {
 	}
 	
 	
-	private String convertObjectToJSon(Object obj) {
+	public String convertObjectToJSon(Object obj) {
 		if(obj == null) return "";
 		ObjectMapper objectMapper = new ObjectMapper();
 		String resJson = null;

@@ -1,9 +1,8 @@
 package com.rbc.app.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,13 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
-import com.rbc.app.domain.Response;
 import com.rbc.app.domain.Success;
-import com.rbc.app.domain.Version;
-import com.rbc.app.exception.SystemRuntimeException;
 import com.rbc.app.service.AppCodeService;
 
 import static com.rbc.app.common.Constants.RESTFUL_VERSION;
@@ -27,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,13 +31,16 @@ import static com.rbc.app.common.Constants.RESTFUL_API;
 @RequestMapping(RESTFUL_VERSION + RESTFUL_API)
 public class AppCodeController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AppCodeController.class);
+	//private static final Logger LOGGER = LoggerFactory.getLogger(AppCodeController.class);
 
 	private AppCodeService appCodeService;
+	private MessageSource messageSource;
 	
 	@Autowired
-	public AppCodeController(@Qualifier("appCodeService") AppCodeService appCodeService) {
+	public AppCodeController(@Qualifier("appCodeService") AppCodeService appCodeService,
+			@Qualifier("messageSource") MessageSource messageSource) {
 		this.appCodeService = Preconditions.checkNotNull(appCodeService);
+		this.messageSource = Preconditions.checkNotNull(messageSource);
 	}
 	
 	@RequestMapping(value="/{appCode}/config/{version:.+}", method = RequestMethod.GET, produces = "application/json")
@@ -52,8 +49,8 @@ public class AppCodeController {
 			@PathVariable("version") String ver, HttpServletRequest req) {
     	
 		String resJson = appCodeService.getDataByAppCodeAndVersion(code, ver);
-		Success response = successResponseMessage("".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value()
-				, "".equals(resJson) ? "No content" : "Success", resJson, req);
+		Success response = successResponseMessage(
+				"".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value(), resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
@@ -62,8 +59,8 @@ public class AppCodeController {
 			@PathVariable("appCode") String code, HttpServletRequest req) {
     	
 		String resJson = appCodeService.getDataListByAppCodeAndOrderByVersionDesc(code);
-		Success response = successResponseMessage("[]".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value()
-				, "[]".equals(resJson) ? "No content" : "Success", resJson, req);
+		Success response = successResponseMessage(
+				"".equals(resJson) ? HttpStatus.NO_CONTENT.value() : HttpStatus.OK.value(), "".equals(resJson) ? "[]" : resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
@@ -74,14 +71,15 @@ public class AppCodeController {
 			@RequestBody String data, HttpServletRequest req) {
     	Preconditions.checkArgument(isNotBlank(data), "Invalid Request");
     	String resJson = appCodeService.save(code, ver, data);
-		Success response = successResponseMessage(HttpStatus.OK.value(), "Success", resJson, req);
+		Success response = successResponseMessage(HttpStatus.OK.value(), resJson, req);
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
-	private Success successResponseMessage(int status, String message, String data, HttpServletRequest request) {
+	private Success successResponseMessage(int status, String data, HttpServletRequest request) {
 		Success success = new Success();
 		success.setTimestamp(getCurrentTimestamp(new Date()));
 		success.setStatus(status);
+		String message = messageSource.getMessage("output.message.success." + status, null, Locale.US);
 		success.setMessage(message);
 		success.setPath(request.getRequestURI());
 		success.setData(data);

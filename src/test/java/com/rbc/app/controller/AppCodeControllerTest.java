@@ -9,11 +9,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.rbc.app.domain.Response;
 import com.rbc.app.domain.Success;
 import com.rbc.app.service.AppCodeService;
 
@@ -22,13 +22,15 @@ public class AppCodeControllerTest {
 	private AppCodeController controller;
 	private AppCodeService service;
 	private MockHttpServletRequest httpRequest;
+	private MessageSource messageSource;
 	private String code = "1";
 	private String ver = "0.0.1";
 
 	@Before
 	public void setUp() {
 		service = mock(AppCodeService.class);
-		controller = new AppCodeController(service);
+		messageSource = mock(MessageSource.class);
+		controller = new AppCodeController(service, messageSource);
 		httpRequest = new MockHttpServletRequest();
 	}
 	
