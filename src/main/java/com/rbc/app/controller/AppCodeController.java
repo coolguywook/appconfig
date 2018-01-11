@@ -43,6 +43,17 @@ public class AppCodeController {
 		this.messageSource = Preconditions.checkNotNull(messageSource);
 	}
 	
+	/*
+	 * [Generic logic] Return JSON document base on @PathVariable appCode and version.
+	 * [Example URL] http://localhost:8080/v1/api/1/config/0.0.1 
+	 * {
+     * "timestamp": 1515712508184,
+     * "status": 200,
+     * "message": "Success",
+     * "path": "/v1/api/1/config/0.0.1",
+     * "data": "{\"code\":\"1\",\"version\":\"0.0.1\",\"data\":\"{\\n\\tname:\\\"Gerrard\\\",\\n\\tage:\\\"30\\\"\\n}\"}"
+     * }
+	 */
 	@RequestMapping(value="/{appCode}/config/{version:.+}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> getData(
 			@PathVariable("appCode") String code,
@@ -54,6 +65,18 @@ public class AppCodeController {
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
+	/*
+	 * [Generic logic] Return list of JSON document base on @PathVariable appCode.
+	 * [Example URL] http://localhost:8080/v1/api/1/config
+	 * [Example]
+	 * {
+     * "timestamp": 1515712418928,
+     * "status": 200,
+     * "message": "Success",
+     * "path": "/v1/api/1/config",
+     * "data": "[{\"versionId\":{\"version\":\"0.0.1\",\"code\":\"1\"},\"use\":\"0\",\"data\":\"{\\n\\tname:\\\"Gerrard\\\",\\n\\tage:\\\"30\\\"\\n}\",\"cdatetime\":1515712415297,\"udatetime\":1515712415297}]"
+     * }
+	 */
 	@RequestMapping(value="/{appCode}/config", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<?> getDataList(
 			@PathVariable("appCode") String code, HttpServletRequest req) {
@@ -64,6 +87,17 @@ public class AppCodeController {
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
+	/*
+	 * [Generic logic] Add or Update JSON document base on @PathVariable appCode and version.
+	 * [Example URL] http://localhost:8080/v1/api/1/config/0.0.1
+	 * {
+     * "timestamp": 1515712306528,
+     * "status": 200,
+     * "message": "Success",
+     * "path": "/v1/api/1/config/0.0.1",
+     * "data": "{\"code\":\"1\",\"version\":\"0.0.1\",\"data\":\"{\\n\\tname:\\\"Gerrard\\\",\\n\\tage:\\\"30\\\"\\n}\"}"
+     * }
+  	 */
 	@RequestMapping(value="/{appCode}/config/{version:.+}", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<?> postData(
 			@PathVariable("appCode") String code,
@@ -75,6 +109,17 @@ public class AppCodeController {
 		return new ResponseEntity<Success>(response, HttpStatus.OK);
 	}
 	
+	/*
+	 * [Generic logic] build JSON response body for Success.
+	 * [Example]
+	 * {
+     * 	"timestamp": 1515712229649,
+     * 	"status": 204,
+     * 	"message": "No content",
+     * 	"path": "/v1/api/a/config/0.0.1",
+     * 	"data": ""
+	 * }
+	 */
 	private Success successResponseMessage(int status, String data, HttpServletRequest request) {
 		Success success = new Success();
 		success.setTimestamp(getCurrentTimestamp(new Date()));

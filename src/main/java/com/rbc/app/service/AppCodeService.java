@@ -35,6 +35,9 @@ public class AppCodeService {
 		this.versionRepository = Preconditions.checkNotNull(versionRepository);
 	}
 	
+	/*
+	 * [Generic Logic] Return JSON Object from database
+	 */
 	public String getDataByAppCodeAndVersion(String code, String ver) {
 		Preconditions.checkNotNull(code);
 		Preconditions.checkNotNull(ver);
@@ -55,6 +58,9 @@ public class AppCodeService {
 		return "";
 	}
 	
+	/*
+	 * [Generic Logic] Return list of JSON Object that sorted by updatetime desc from database
+	 */
 	public String getDataListByAppCodeAndOrderByVersionDesc(String code) {
 		Preconditions.checkNotNull(code);
 		AppCode appCode = appCodeRepository.findByCode(code);
@@ -77,6 +83,9 @@ public class AppCodeService {
 		return convertObjectToJSon(versions);
 	}
 	
+	/*
+	 * [Generic Logic] Save requested data from client and return saved data. 
+	 */
 	@Transactional
 	public String save(String code, String ver, String data) {
 		Preconditions.checkNotNull(code);
