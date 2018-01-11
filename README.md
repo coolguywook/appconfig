@@ -10,3 +10,6 @@ The application needs to store the JSON documents in any SQL database using Spri
  Task #2
 
 Create unit tests for task #1 (controller, service and repository layers)
+
+
+# DataBase H2 In-memory database.
