@@ -26,9 +26,8 @@ public class AppCodeRepositoryTest {
 
     @Test
     public void testInsertAppCodeShouldReturnExpectedAppCode() throws Exception {
-        this.entityManager.persist(new AppCode("code1", new Timestamp(System.currentTimeMillis())));
+        this.entityManager.persist(new AppCode(1, new Timestamp(System.currentTimeMillis())));
         AppCode appCode = this.repository.findOne(1);
         assertEquals(1, appCode.getCode().intValue());
-        assertThat(appCode.getName()).isEqualTo("code1");
     }
 }

@@ -6,4 +6,5 @@ import com.rbc.app.domain.AppCode;
 
 public interface AppCodeRepository extends JpaRepository<AppCode, Integer> {
 
+	AppCode findByCode(Integer code);
 }
