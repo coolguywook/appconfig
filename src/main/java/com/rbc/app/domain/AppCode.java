@@ -2,14 +2,10 @@ package com.rbc.app.domain;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -34,7 +30,7 @@ public class AppCode {
 	 @Column(name = "c_datetime")
 	 private Timestamp cDatetime;
 	 
-	 @OneToMany(fetch = FetchType.LAZY, mappedBy = "appCode", cascade = CascadeType.ALL)
+	 @OneToMany(mappedBy = "appCode", cascade = CascadeType.ALL)
 	 @JsonManagedReference
 	 private List<Version> versions;
 	 

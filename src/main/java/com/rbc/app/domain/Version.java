@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -38,7 +37,7 @@ public class Version {
 	@Column(name = "u_datetime")
 	private Timestamp uDatetime;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "code", referencedColumnName = "code", insertable=false, updatable=false)
 	@JsonBackReference
     private AppCode appCode;
