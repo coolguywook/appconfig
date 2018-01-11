@@ -1,7 +1,6 @@
 create table appcode
 (
-   code integer auto_increment not null,
-   name varchar(255) not null,
+   code integer not null,
    c_datetime timestamp,
    primary key(code)
 );

@@ -33,7 +33,7 @@ public class VersionRepositoryTest {
 
     @Test
     public void testInsertVersionShouldReturnExpectedVersioni() throws Exception {
-    	this.entityManager.persist(new AppCode("code1", new Timestamp(System.currentTimeMillis())));
+    	this.entityManager.persist(new AppCode(1, new Timestamp(System.currentTimeMillis())));
         AppCode appCode = this.appCodeRepository.findOne(1);
         
     	VersionId id = new VersionId();

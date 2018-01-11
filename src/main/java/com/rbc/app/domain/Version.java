@@ -5,13 +5,20 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(exclude="appCode")
+@ToString(exclude = {"appCode"})
 @Entity
 @Table(name = "version")
 public class Version {
@@ -31,7 +38,8 @@ public class Version {
 	@Column(name = "u_datetime")
 	private Timestamp uDatetime;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "code", referencedColumnName = "code", insertable=false, updatable=false)
+	@JsonBackReference
     private AppCode appCode;
 }
