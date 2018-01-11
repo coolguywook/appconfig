@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.rbc.app.domain.AppCode;
 
-public interface AppCodeRepository extends JpaRepository<AppCode, Integer> {
+public interface AppCodeRepository extends JpaRepository<AppCode, String> {
 
-	AppCode findByCode(Integer code);
+	AppCode findByCode(String code);
 }

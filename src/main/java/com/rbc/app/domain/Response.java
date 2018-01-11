@@ -7,7 +7,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 public class Response {
-	private Integer code;
+	private String code;
 	private String version;
 	private String data;
 }

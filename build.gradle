@@ -3,16 +3,23 @@ buildscript {
 		springBootVersion = '1.5.9.RELEASE'
 	}
 	repositories {
+		maven {
+	      url "https://plugins.gradle.org/m2/"
+	    }
 		mavenCentral()
 	}
 	dependencies {
+		classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "com.palantir:jacoco-coverage:0.4.0"
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
+apply plugin: 'com.palantir.jacoco-coverage'
 
 group = 'com.rbc'
 version = '0.0.1-SNAPSHOT'
@@ -27,8 +34,44 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.google.guava:guava:21.0')
+	compile('org.apache.commons:commons-lang3:3.4')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile group: 'com.googlecode.junit-toolbox', name: 'junit-toolbox', version: '2.2'
 }
+
+// JaCoCo - Setting JaCoCo Version
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+// JaCoCo - Coverage Limits
+jacocoCoverage {
+    // Enforce minimum code coverage for every Java file.
+    classThreshold 0.80, INSTRUCTION
+
+ 	
+}
+
+// JaCoCo - Override some of Jacoco default values
+jacocoTestReport {
+    description 'Generates Code coverage report. Fails build if it does not meet minimum coverage.'
+
+    reports {
+        xml.enabled true    //XML required by coveralls and for the below coverage checks
+        html.enabled = true
+        csv.enabled = false
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: ['com/rbc/app/config/*.class',
+            							 'com/rbc/app/common/Constants.class',
+            							 'com/rbc/app/domain/*.class',
+            							 'com/rbc/app/AppconfigManagerApplication.class'])
+        })
+    }
+}
+
+tasks.test.finalizedBy jacocoTestReport

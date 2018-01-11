@@ -17,5 +17,5 @@ public class VersionId implements Serializable{
 	private String version;
 	
 	@Column(name = "code")
-	private Integer code;
+	private String code;
 }
