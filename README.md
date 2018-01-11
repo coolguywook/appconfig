@@ -12,4 +12,12 @@ The application needs to store the JSON documents in any SQL database using Spri
 Create unit tests for task #1 (controller, service and repository layers)
 
 
-# DataBase H2 In-memory database.
+* DataBase : H2 In-memory database.
+* Build Tool : gradle v3.4
+* Spring boot : v1.5.9
+* Spring Data jpa
+* Goole guava v21.0
+* Goolecode junit-toolbox v2.2
+* lombok
+* Spring devtools
+* Apache common-lang3
